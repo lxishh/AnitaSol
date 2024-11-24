@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,13 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-g!w&8_c01^dj1nzo@fap_pw9r^&g1=u6l=y9#*tpmh@@xx_!)v'
+# Cargar la clave secreta desde el archivo .env (sin valor predeterminado en producción)
+SECRET_KEY = config('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Seguridad: No ejecutar en producción con DEBUG activado
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+# Parseo de ALLOWED_HOSTS desde el archivo .env
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
 
 
 # Application definition
@@ -37,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'appAnitaSol'
 ]
 
 MIDDLEWARE = [
@@ -54,7 +58,7 @@ ROOT_URLCONF = 'proyectoAnitaSol.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,8 +79,12 @@ WSGI_APPLICATION = 'proyectoAnitaSol.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': config('DB_ENGINE', default='django.db.backends.mysql'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 
@@ -90,6 +98,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 12,  # Aumenta la longitud mínima recomendada para la contraseña
+        },
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -99,13 +110,22 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Seguridad adicional (OWASP recomendaciones)
+SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)  # Redirige a HTTPS
+SESSION_COOKIE_SECURE = True  # Cookies de sesión seguras
+CSRF_COOKIE_SECURE = True  # Cookies CSRF seguras
+X_FRAME_OPTIONS = 'DENY'  # Evita el clickjacking
+SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=31536000, cast=int)  # Strict-Transport-Security
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_BROWSER_XSS_FILTER = True  # Filtro contra ataques XSS
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-CL'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 
@@ -119,7 +139,17 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#Cambios importantes:
+#Variables sensibles mediante decouple: SECRET_KEY, DEBUG, ALLOWED_HOSTS, y configuraciones de la base de datos (DB_NAME, DB_USER, etc.) se obtienen de un archivo .env.
+#Cookies seguras: SESSION_COOKIE_SECURE y CSRF_COOKIE_SECURE activadas.
+#Redirección HTTPS: SECURE_SSL_REDIRECT activado para entornos de producción.
+#HSTS: Configuración para habilitar Strict-Transport-Security.
+#Mejoras en contraseñas: Longitud mínima de contraseñas aumentada a 12 caracteres.
+#Protección contra clickjacking: Añadido X_FRAME_OPTIONS = 'DENY'.
