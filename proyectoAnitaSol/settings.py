@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'appAnitaSol',
     'usuarios',
     'bootstrap5',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

@@ -1,8 +1,7 @@
 from django.db import models
+from datetime import datetime
 
 # Create your models here.
-from django.db import models
-
 class Usuario(models.Model):
     usuario = models.CharField(max_length=50, unique=True)
     contraseña = models.CharField(max_length=255)
@@ -20,12 +19,15 @@ class Categoria(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
 
+    def __str__(self):
+        return self.nombre
+
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
     cantidad = models.IntegerField()
     precio = models.FloatField()
-    fecha_ingreso = models.DateTimeField()
+    fecha_ingreso = models.DateField(default=datetime.now)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
 
 class InventarioProducto(models.Model):

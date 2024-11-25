@@ -25,4 +25,6 @@ urlpatterns = [
     path('usuarios/', include('django.contrib.auth.urls')),
     #usar las urls de la app usuarios
     path('usuarios/', include('usuarios.urls')),
+    #usar las urls de la app productos
+    path('productos/', include('productos.urls')),
 ]
