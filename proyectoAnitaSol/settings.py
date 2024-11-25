@@ -58,6 +58,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'proyectoAnitaSol.urls'
 
+LOGIN_URL = '/login/'  # URL para la página de inicio de sesión
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

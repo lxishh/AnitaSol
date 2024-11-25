@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from appAnitaSol import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +24,7 @@ urlpatterns = [
     path('opciones/', views.opciones, name='menuopciones'),
     #usuarios
     path('usuarios/', include('django.contrib.auth.urls')),
+    path('login/', auth_views.LoginView.as_view(template_name='authenticate/login.html'), name='login'),
     #usar las urls de la app usuarios
     path('usuarios/', include('usuarios.urls')),
     #usar las urls de la app productos

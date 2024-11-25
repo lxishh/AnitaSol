@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendedores</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container my-4">
+      <!-- Logo y cabecera -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Logo -->
+        <div>
+          <a href="{% url 'menuopciones' %}">
+            <img
+              src="{% static 'logo.png' %}"
+              alt="Logo de la empresa"
+              style="width: 180px; height: auto"
+            />
+          </a>
+        </div>
+
+        <!-- Título y botón de agregar vendedor -->
+        <div class="text-center">
+          <h1 class="mb-0">Vendedores</h1>
+          <div class="mt-4">
+            <a href="{% url 'registrarvendedor' %}" class="btn btn-dark">
+              Agregar Vendedor
+            </a>
+          </div>
+        </div>
+
+        <!-- Información del propietario -->
+        <div class="text-end">
+          <i
+            class="bi bi-person-fill"
+            style="color: black; margin-right: 5px; font-size: 2.5rem"
+          ></i>
+          <strong>Propietario</strong>
+        </div>
+      </div>
+
+      <!-- Tabla de vendedores -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <i class="fas fa-table me-1"></i>
+          Tabla de Vendedores
+        </div>
+        <div class="card-body">
+          <input
+            type="text"
+            id="searchInput"
+            class="form-control mb-3"
+            placeholder="Buscar por fecha"
+          />
+
+          <table
+            id="vendedoresTable"
+            class="table table-striped table-bordered"
+          >
+            <thead class="table-header">
+              <tr>
+                <th class="table-danger">Nombre de Usuario</th>
+                <th class="table-danger">Correo</th>
+                <th class="table-danger">Nombre</th>
+                <th class="table-danger">Apellidos</th>
+                <th class="table-danger">Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for usuario in usuarios %}
+              <tr>
+                <td scope="row">{{ usuario.username }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>{{ usuario.first_name }}</td>
+                <td>{{ usuario.last_name }}</td>
+                <td>
+                  <a
+                    href="{% url 'actualizarvendedor' usuario.id %}"
+                    class="btn btn-dark btn-sm"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <button
+                    class="btn btn-dark btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmModal"
+                    onclick="setDeleteUrl('{{ usuario.id }}')"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" class="text-center">
+                  No hay vendedores disponibles.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de confirmación de eliminación -->
+    <div
+      class="modal fade"
+      id="confirmModal"
+      tabindex="-1"
+      aria-labelledby="confirmModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalLabel">
+              Confirmar Eliminación
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            ¿Estás seguro de que deseas eliminar este elemento? Esta acción no
+            se puede deshacer.
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <a id="confirmDeleteButton" href="#" class="btn btn-danger"
+              >Eliminar</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script para eliminar vendedor y activar modal -->
+    <script>
+      function setDeleteUrl(id) {
+        var url = "/vendedores/eliminar/" + id;
+        document
+          .getElementById("confirmDeleteButton")
+          .setAttribute("href", url);
+      }
+    </script>
+
+    <script>
+      // Script para búsqueda en la tabla
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", function () {
+          let filter = this.value.toLowerCase();
+          let rows = document.querySelectorAll("#vendedoresTable tbody tr");
+
+          rows.forEach(function (row) {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+          });
+        });
+    </script>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/busqueda_tabla.js' %}"></script>
+  </body>
+</html>
