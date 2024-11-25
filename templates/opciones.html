@@ -10,11 +10,13 @@
   <body class="container mt-4">
     <!-- Logo de la empresa -->
     <div class="mb-4 text-center">
-      <img
-        src="{% static 'logo.png' %}"
-        alt="Logo de la empresa"
-        style="width: 180px; height: auto"
-      />
+      <a href="{% url 'home' %}">
+        <img
+          src="{% static 'logo.png' %}"
+          alt="Logo de la empresa"
+          style="width: 180px; height: auto"
+        />
+      </a>
     </div>
 
     <!-- Título de la página -->
@@ -30,7 +32,10 @@
       >
         <strong>Productos</strong>
       </a>
-      <a href="/ventas" class="alert alert-info text-center w-50 mb-3">
+      <a
+        href="{% url 'ventas' %}"
+        class="alert alert-info text-center w-50 mb-3"
+      >
         <strong>Ventas</strong>
       </a>
       <a href="/vendedores" class="alert alert-info text-center w-50 mb-3">

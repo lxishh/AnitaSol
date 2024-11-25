@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Actualizar Venta</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+  </head>
+  <body>
+    {% for vp in venta_productos %}
+    <div class="container my-4">
+      <h1 class="mt-4 mb-4">Actualizar Venta: {{ vp.producto.nombre }}</h1>
+
+      <div class="card">
+        <div class="card-header">
+          <i class="fas fa-edit"></i> Actualizar Venta
+        </div>
+        <div class="card-body bg-light">
+          <form method="POST">
+            {% csrf_token %}
+            
+            <!-- Mostrar los productos de la venta para actualizarlos -->
+              <div class="mb-3">
+                <label for="producto_{{ vp.producto.id }}" class="form-label">
+                  Producto: {{ vp.producto.nombre }}
+                </label>
+                <select name="producto_{{ vp.producto.id }}" id="producto_{{ vp.producto.id }}" class="form-control">
+                  {% for producto in productos %}
+                    <option value="{{ producto.id }}" {% if producto.id == vp.producto.id %}selected{% endif %}>
+                      {{ producto.nombre }} - ${{ producto.precio }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="cantidad_{{ vp.producto.id }}" class="form-label">Cantidad:</label>
+                <input type="number" name="cantidad_{{ vp.producto.id }}" value="{{ vp.cantidad }}" class="form-control" min="1">
+              </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-success">Actualizar Venta</button>
+            <a href="{% url 'ventas' %}" class="btn btn-danger">Cancelar</a>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  </body>
+</html>

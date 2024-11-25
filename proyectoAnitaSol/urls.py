@@ -27,4 +27,6 @@ urlpatterns = [
     path('usuarios/', include('usuarios.urls')),
     #usar las urls de la app productos
     path('productos/', include('productos.urls')),
+    #usar las urls de la app ventas
+    path('ventas/', include('ventas.urls')),
 ]
