@@ -81,3 +81,6 @@ def eliminar_venta(request, id):
     # Elimina la venta
     venta.delete()
     return redirect('ventas')  # Redirige a la vista de listar ventas
+
+def listar_ingresos(request):
+    return render(request, 'ingresos.html')
